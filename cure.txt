@@ -1,0 +1,89 @@
+import { useState } from 'react'
+import { Button } from "/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "/components/ui/card"
+import { Input } from "/components/ui/input"
+import { Label } from "/components/ui/label"
+import { Heart, Star } from "lucide-react"
+
+export default function CareWise() {
+  const [symptoms, setSymptoms] = useState('')
+  const [recommendations, setRecommendations] = useState<string[]>([])
+  const [feedback, setFeedback] = useState<string | null>(null)
+
+  const mockRecommendations = [
+    "Rest and stay hydrated.",
+    "Take over-the-counter pain relievers.",
+    "Use a humidifier if you have a cough.",
+    "Apply a warm compress to the affected area.",
+  ]
+
+  const handleSymptomChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSymptoms(e.target.value)
+  }
+
+  const handleSubmit = () => {
+    if (symptoms.trim()) {
+      setRecommendations(mockRecommendations)
+      setFeedback(null)
+    }
+  }
+
+  const handleFeedback = (isHelpful: boolean) => {
+    setFeedback(isHelpful ? "Helpful" : "Not Helpful")
+  }
+
+  return (
+    <Card className="w-full max-w-2xl mx-auto mt-10">
+      <CardHeader>
+        <CardTitle className="text-2xl font-bold">CareWise Symptom Checker</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div>
+          <Label htmlFor="symptoms" className="block text-sm font-medium leading-6 text-gray-900">
+            Enter your symptoms
+          </Label>
+          <Input
+            id="symptoms"
+            type="text"
+            value={symptoms}
+            onChange={handleSymptomChange}
+            placeholder="e.g., headache, fever"
+            className="mt-2"
+          />
+        </div>
+        <Button onClick={handleSubmit} disabled={!symptoms.trim()}>
+          Submit
+        </Button>
+        {recommendations.length > 0 && (
+          <div>
+            <CardTitle className="text-xl font-bold mt-4">Treatment Recommendations</CardTitle>
+            <ul className="mt-2 space-y-2">
+              {recommendations.map((recommendation, index) => (
+                <li key={index} className="flex items-center space-x-2">
+                  <Star className="w-4 h-4 text-blue-500" />
+                  <span>{recommendation}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {feedback && (
+          <div className="mt-4">
+            <CardTitle className="text-lg font-bold">Thank you for your feedback!</CardTitle>
+            <p className="mt-2 text-gray-600">You marked the recommendations as: {feedback}</p>
+          </div>
+        )}
+        {recommendations.length > 0 && !feedback && (
+          <div className="mt-4 flex space-x-2">
+            <Button onClick={() => handleFeedback(true)} variant="outline">
+              <Heart className="w-4 h-4 mr-2" /> Helpful
+            </Button>
+            <Button onClick={() => handleFeedback(false)} variant="outline">
+              Not Helpful
+            </Button>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  )
+}
